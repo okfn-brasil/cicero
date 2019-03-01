@@ -4,19 +4,17 @@ verify_ssl = true
 name = "pypi"
 
 [requires]
-python_version = "3.6"
+python_version = "3.7"
 
 [packages]
-markdownify = "*"
-PyPDF2 = "*"
+peewee = "*"
+psycopg2-binary = "*"
 python-decouple = "*"
-python-memcached = "*"
+python-twitter = "*"
 scrapy = "*"
-scrapy-memcached-cache = "*"
-pytz = "*"
 
 [dev-packages]
 ipdb = "*"
-ipython = "*"
 pytest = "*"
+pytest-black = "*"
 pytest-mock = "*"

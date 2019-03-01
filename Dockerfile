@@ -1,15 +1,19 @@
-FROM python:3.6.7-alpine
+FROM python:3.7.2-slim
 
-WORKDIR /code
+WORKDIR /opt
 
 ADD Pipfile Pipfile
 ADD Pipfile.lock Pipfile.lock
 
-RUN apk update && \
-    apk add build-base g++ gcc libffi-dev libxslt-dev openssl-dev && \
+RUN apt-get update -y && \
+    apt-get install -y build-essential && \
     pip install -U pip && \
     pip install -U pipenv && \
-    pipenv install --system --dev
+    pipenv install --system --dev --deploy && \
+    apt-get remove -y build-essential && \
+    apt-get autoremove -y && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 ADD scrapy.cfg scrapy.cfg
-ADD raspadorlegislativo /code/raspadorlegislativo
+ADD cicero /opt/cicero

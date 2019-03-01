@@ -7,11 +7,17 @@ services:
     env_file:
       - .env
     volumes:
-      - ./:/code
-      - ./secrets:/mnt/secrets
+      - ./:/opt
     depends_on:
-      - memcached
-    command: ["python", "run.py"]
+      - postgres
 
-  memcached:
-    image: memcached:1.5.8-alpine
+  postgres:
+    image: postgres:11.2-alpine
+    volumes:
+      - ./postgres:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=cicero
+      - POSTGRES_USER=cicero
+      - POSTGRES_PASSWORD=cicero
+    ports:
+      - 5432:5432

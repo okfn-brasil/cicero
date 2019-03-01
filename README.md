@@ -1,50 +1,47 @@
-# Raspador Legislativo
+# Cícero
 
-Repositório de testes de código para integrar, futuramente, o
-[Radar Legislativo](https://gitlab.com/codingrights/radarlegislativo). O
-objetivo é automatizar a inclusão de projetos de lei e aganda de tramitação no
-_Radar_ de acordo com palavras chaves.
+> Quosque tandem abutere patientia nostra?
 
-## Configurações
+Bot que monitora a pauta de dados abertos no legislativo federal (Câmara dos Deputados e Senado Federal). O [Cícero](https://twitter.com/botcicero) tuíta sempre que um projeto de lei sobre o tema é criado.
+
+## Instruções de uso
+
+### Configurações
 
 Copie os arquivos de configuração e edite-os de acordo com o desejado:
 
 ```sh
 $ cp .env.sample .env
-$ cp secrets/keywords.json.sample secrets/keywords.json
 ```
 
-### Coletando todos os projetos de lei
+Em seguida, crie a tabela no banco de dados:
 
-Não configurar a variável `KEYWORDS` faz com que o _Raspador_ colete dados
-sobre **todos** os projetos de lei em tramitação desde `START_DATE`, mas
-nesse caso o _Raspador_ **não** envia os resultados para a API do
-_Radar Legislativo_.
+```sh
+docker-compose run --rm scrapy python -c "from cicero.models import create_tables; create_tables()"
+```
 
-### Enviando os dados para o _Radar Legislativo_
-
-Configurando as variáveis `RASPADOR_API_URL` e `RASPADOR_API_TOKEN` de acordo
-com sua instância do _Radar Legislativo_ faz com que os projetos de lei
-encontrados sejam enviados para o _Radar_ **desde que** houver ao menos uma
-palavra-chave configurada no arquivo configurado na variávem de ambiente
-`KEYWORDS`.
-
-## Instalação em container (com Docker)
+### Instalação
 
 Requer [Docker](https://docs.docker.com/install/) e
 [Docker Compose](https://docs.docker.com/compose/install/).
 
-Para rodar todos os raspadores:
+### Coletando dados
+
+Para coletar os dados, utilize os raspadores regulamente, eles alimentam o banco de dados:
 
 ```sh
-$ docker-compose run --rm scrapy scrapy crawl camara
-$ docker-compose run --rm scrapy scrapy crawl senado
-$ docker-compose run --rm scrapy scrapy crawl agenda_camara
-$ docker-compose run --rm scrapy scrapy crawl agenda_senado
+$ docker-compose run --rm scrapy scrapy crawl chamber
+$ docker-compose run --rm scrapy scrapy crawl senate
 ```
 
-Verifique o resultado no diretótio `data/` (ou, se for o caso, na sua instância
-do _Radar Legislativo_).
+### Tuitando
+
+Para tuitar a atividade mais recente, use esse comando (cada vez que ele é executado, um tuíte é publicado com o projeto de lei ou emenda mais recente encontrado no banco e ainda não tuitado):
+
+```sh
+$ docker-compose run --rm scrapy python tweet.py
+```
+
 
 ### Testes
 
@@ -52,31 +49,6 @@ do _Radar Legislativo_).
 docker-compose run --rm scrapy py.test
 ```
 
-## Instalação local (sem Docker)
+## Créditos
 
-Requer [Python](https://python.org) 3.6 com [Pipenv](https://docs.pipenv.org/).
-
-Instale as dependências e entre no _virtualenv_:
-
-```sh
-$ pipenv install
-$ pipenv shell
-```
-
-Para rodar todos os raspadores:
-
-```sh
-$ scrapy crawl camara
-$ scrapy crawl senado
-$ scrapy crawl agenda_camara
-$ scrapy crawl agenda_senado
-```
-
-Verifique o resultado no diretótio `data/` (ou, se for o caso, na sua instância
-do _Radar Legislativo_).
-
-### Testes
-
-```sh
-py.test
-```
+Esse repositório é um _fork_ [de um projeto](https://github.com/cuducos/raspadorlegislativo) feito para integrar o [Radar Legislativo](https://gitlab.com/codingrights/radarlegislativo), durante uma iniciativa financiada pelo [IBCCRIM](https://ibccrim.org.br). Mais tarde a [Open Knowledge Brasil](https://br.okfn.org) fez o _fork_ para iniciar o Cícero.

@@ -3,6 +3,4 @@
 .pytest_cache/
 .scrapy/
 __pycache__/
-data/*.csv
-secrets/*.*
-!secrets/*.sample
+postgres/
